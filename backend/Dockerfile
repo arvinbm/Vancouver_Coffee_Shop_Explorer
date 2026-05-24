@@ -15,7 +15,7 @@ WORKDIR /app
 # Copy manifests first. Docker caches each layer — if package.json hasn't
 # changed, the npm install layer is reused even when src/ changes.
 COPY package*.json ./
-RUN npm ci                        # ci = clean install, exact versions from lockfile
+RUN npm install
 
 COPY tsconfig.json ./
 COPY src ./src
@@ -27,7 +27,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --omit=dev             # production deps only
+RUN npm install --omit=dev
 
 COPY --from=builder /app/dist ./dist
 

@@ -9,7 +9,7 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # Copy everything except src/ — src/ is mounted as a volume in docker-compose
 # so changes on your host appear instantly inside the container.
