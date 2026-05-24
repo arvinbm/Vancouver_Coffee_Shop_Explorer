@@ -6,12 +6,12 @@ A full-stack web application to discover and filter Vancouver coffee shops on an
 
 ## Stack
 
-| Layer | Technology | Why |
-|---|---|---|
-| Frontend | React 18 + TypeScript + Vite | Component model, type safety, fast dev server with HMR |
-| Backend | Node.js + Express + TypeScript | Lightweight REST API, same language across the stack |
-| Database | PostgreSQL 16 | Relational, great geospatial support, industry standard |
-| Dev environment | Docker Compose | One command spins up all three services consistently |
+| Layer | Technology |
+|---|---|
+| Frontend | React 18 + TypeScript + Vite |
+| Backend | Node.js + Express + TypeScript |
+| Database | PostgreSQL 16 |
+| Dev environment | Docker Compose |
 
 ---
 
@@ -115,26 +115,3 @@ The Vite proxy (`vite.config.ts`) is the key dev-time trick: the browser only ev
 - [x] Shared pg connection pool with error handling
 - [x] `GET /api/health` — verifies both the server and DB are reachable
 - [x] React + Vite shell with a health-check display
-
-## What's next (build in this order)
-
-- [ ] `GET /api/neighborhoods` — list all neighborhoods
-- [ ] `GET /api/shops` — list shops, with optional `?neighborhood_id=` filter
-- [ ] `GET /api/shops/:id` — single shop detail
-- [ ] Seed the DB with real Vancouver coffee shop data
-- [ ] `<CoffeeShopList>` React component — fetches and renders the shop list
-- [ ] `<NeighborhoodFilter>` — dropdown that drives the list filter
-- [ ] `<MapView>` — Leaflet map with a marker per shop
-- [ ] `<ShopCard>` — detail panel on marker click
-
----
-
-## Environment variables
-
-Copy `backend/.env.example` to `backend/.env`. When running via Docker Compose the variables are injected through `docker-compose.yml` automatically, so `.env` is only needed for running the backend outside Docker.
-
-| Variable | Default | Description |
-|---|---|---|
-| `PORT` | `4000` | Port the Express server listens on |
-| `DATABASE_URL` | see `.env.example` | Full Postgres connection string |
-| `NODE_ENV` | `development` | Controls CORS origin and logging verbosity |
