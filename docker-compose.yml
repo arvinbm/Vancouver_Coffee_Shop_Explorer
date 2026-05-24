@@ -1,0 +1,69 @@
+# docker-compose.yml
+#
+# Defines three services that make up the full stack:
+#   postgres  — the database (runs on port 5432 internally, 5433 on your host to avoid conflicts)
+#   backend   — the Node/Express API (port 4000)
+#   frontend  — the Vite dev server (port 5173)
+#
+# Run everything:       docker compose up --build
+# Run just the DB:      docker compose up postgres
+# Tear everything down: docker compose down -v   (-v also removes the named volume)
+
+services:
+
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine        # alpine = smaller image
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-coffee_explorer}
+      POSTGRES_USER:     ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5433:5432"                  # host:container — use 5433 so it doesn't clash with a local pg install
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # persists data between restarts
+      - ./db:/docker-entrypoint-initdb.d         # runs *.sql files in /db on first boot (in filename order)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Backend (Node.js / Express / TypeScript) ───────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV:          development
+      PORT:              4000
+      DATABASE_URL:      postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-coffee_explorer}
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend/src:/app/src       # hot-reload: changes in src/ reflect immediately (ts-node-dev)
+    depends_on:
+      postgres:
+        condition: service_healthy   # waits for the DB healthcheck before starting
+
+  # ── Frontend (React / TypeScript / Vite) ───────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: http://localhost:4000   # the React app calls the backend at this address
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src      # hot-reload: Vite watches for changes
+    depends_on:
+      - backend
+
+# ── Named volumes ─────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    # Docker manages this volume. Data survives `docker compose down` but not `docker compose down -v`.
