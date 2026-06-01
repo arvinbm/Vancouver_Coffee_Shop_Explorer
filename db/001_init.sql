@@ -56,16 +56,4 @@ CREATE INDEX IF NOT EXISTS idx_coffee_shops_neighborhood
 CREATE INDEX IF NOT EXISTS idx_coffee_shops_location
     ON coffee_shops(latitude, longitude);
 
--- ── Seed data: neighborhoods ──────────────────────────────────────────────────
--- A handful of real Vancouver neighborhoods to start with.
--- Add more in 002_seed.sql or a later migration.
-INSERT INTO neighborhoods (name) VALUES
-    ('Kitsilano'),
-    ('Mount Pleasant'),
-    ('Commercial Drive'),
-    ('Downtown'),
-    ('Gastown'),
-    ('Yaletown'),
-    ('Main Street'),
-    ('Fairview')
-ON CONFLICT (name) DO NOTHING;   -- safe to re-run; won't duplicate rows
+-- Seed data lives in 003_seed.sql to keep schema and data separate.
