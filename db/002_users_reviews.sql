@@ -61,17 +61,21 @@ CREATE INDEX IF NOT EXISTS idx_reviews_coffee_shop
 CREATE INDEX IF NOT EXISTS idx_reviews_user
     ON reviews(user_id);
 
--- ── Prevent duplicate coffee shops ───────────────────────────────────────────
--- Adds a UNIQUE constraint on coffee_shops.name so the database rejects
--- an insert if a shop with the same name already exists.
--- IF NOT EXISTS is not supported for constraints, so we use DO $$ ... $$ to
--- check first and avoid an error if this file is somehow run twice.
+-- ── Prevent duplicate coffee shops via Google Place ID ───────────────────────
+-- Adds a google_place_id column to coffee_shops. Every place in Google's
+-- database has a globally unique Place ID (e.g. ChIJN1t_tDeuEmsRUsoyG83frY4).
+-- This is the most reliable way to prevent duplicate shops — two submissions
+-- of the same real-world location will always share the same Place ID.
+--
+-- Nullable: manually seeded shops (inserted directly via SQL) do not need a
+-- Place ID. The UNIQUE constraint still applies to all non-NULL values —
+-- PostgreSQL treats NULLs as distinct, so multiple NULL rows are allowed.
 DO $$
 BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint
-        WHERE conname = 'unique_shop_name'
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'coffee_shops' AND column_name = 'google_place_id'
     ) THEN
-        ALTER TABLE coffee_shops ADD CONSTRAINT unique_shop_name UNIQUE (name);
+        ALTER TABLE coffee_shops ADD COLUMN google_place_id VARCHAR(255) UNIQUE;
     END IF;
 END $$;
