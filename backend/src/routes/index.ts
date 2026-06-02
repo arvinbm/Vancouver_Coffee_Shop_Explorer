@@ -6,10 +6,12 @@
 import { Router, Request, Response } from 'express';
 import pool from '../db';
 import authRouter from './auth';
+import shopsRouter from './shops';
 
 const router = Router();
 
 router.use('/auth', authRouter);
+router.use('/shops', shopsRouter);
 
 // ── GET /api/health ───────────────────────────────────────────────────────────
 // A lightweight endpoint to verify:
