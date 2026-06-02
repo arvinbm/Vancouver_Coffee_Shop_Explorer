@@ -5,36 +5,10 @@
 --
 -- Runs automatically after 001_init.sql and 002_users_reviews.sql on first boot.
 -- To reset and re-run: docker compose down -v && docker compose up
---
--- NOTE: Coordinates are accurate to ~100m. Verify against Google Maps
--- before going to production.
 
 -- ── Neighbourhoods ────────────────────────────────────────────────────────────
 -- Inserted in a fixed order so their SERIAL ids are predictable.
 -- The coffee shop INSERTs below reference these ids directly.
---
---  id │ neighbourhood
--- ────┼──────────────────────
---   1 │ Kitsilano
---   2 │ Mount Pleasant
---   3 │ Commercial Drive
---   4 │ Downtown
---   5 │ Gastown
---   6 │ Yaletown
---   7 │ Main Street
---   8 │ Fairview
---   9 │ West End
---  10 │ Coal Harbour
---  11 │ Strathcona
---  12 │ Chinatown
---  13 │ South Granville
---  14 │ Kerrisdale
---  15 │ Dunbar
---  16 │ Point Grey
---  17 │ Hastings-Sunrise
---  18 │ Grandview-Woodland
---  19 │ Olympic Village
---  20 │ Cambie Village
 
 INSERT INTO neighborhoods (name) VALUES
     ('Kitsilano'),
@@ -61,8 +35,6 @@ ON CONFLICT (name) DO NOTHING;
 
 -- ── Coffee shops ──────────────────────────────────────────────────────────────
 -- One popular shop per neighbourhood.
--- google_place_id is NULL for manually seeded rows — it will be populated
--- when shops are re-submitted through the Google Places UI feature.
 
 INSERT INTO coffee_shops
     (name, address, neighborhood_id, latitude, longitude, website, phone, google_maps_url)
