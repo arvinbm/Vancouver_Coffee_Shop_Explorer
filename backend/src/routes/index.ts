@@ -7,11 +7,13 @@ import { Router, Request, Response } from 'express';
 import pool from '../db';
 import authRouter from './auth';
 import shopsRouter from './shops';
+import neighborhoodsRouter from './neighborhoods';
 
 const router = Router();
 
 router.use('/auth', authRouter);
 router.use('/shops', shopsRouter);
+router.use('/neighborhoods', neighborhoodsRouter);
 
 // ── GET /api/health ───────────────────────────────────────────────────────────
 // A lightweight endpoint to verify:
