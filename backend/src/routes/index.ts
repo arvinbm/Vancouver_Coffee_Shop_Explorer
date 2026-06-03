@@ -8,12 +8,14 @@ import pool from '../db';
 import authRouter from './auth';
 import shopsRouter from './shops';
 import neighborhoodsRouter from './neighborhoods';
+import reviewsRouter from './reviews';
 
 const router = Router();
 
 router.use('/auth', authRouter);
 router.use('/shops', shopsRouter);
 router.use('/neighborhoods', neighborhoodsRouter);
+router.use('/shops/:id/reviews', reviewsRouter);
 
 // ── GET /api/health ───────────────────────────────────────────────────────────
 // A lightweight endpoint to verify:
