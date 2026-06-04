@@ -8,7 +8,6 @@ export interface CoffeeShop {
   address: string | null;
   latitude: string;
   longitude: string;
-  description: string | null;
   google_place_id: string | null;
   neighborhood_id: number;
   neighborhood_name: string;
@@ -19,7 +18,6 @@ export interface CreateShopPayload {
   address?: string;
   latitude: number;
   longitude: number;
-  description?: string;
   google_place_id?: string;
   neighborhood_id: number;
 }

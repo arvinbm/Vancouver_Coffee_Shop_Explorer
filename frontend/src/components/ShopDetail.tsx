@@ -68,9 +68,6 @@ export default function ShopDetail({ shop, onClose }: Props) {
         {shop.address && (
           <p className="text-sm text-muted-foreground">{shop.address}</p>
         )}
-        {shop.description && (
-          <p className="text-sm">{shop.description}</p>
-        )}
 
         {avgRating && (
           <p className="text-sm font-medium">

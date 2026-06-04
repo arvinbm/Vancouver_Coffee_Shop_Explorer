@@ -2,8 +2,7 @@
 //
 // Protected form — only visible to logged-in users.
 // Uses the Google Places Autocomplete widget to fill in name, address,
-// lat/lng, and place_id automatically. The user only has to pick a
-// neighbourhood and optionally add a description.
+// lat/lng, and place_id automatically. The user only has to pick a neighbourhood.
 
 import { useState, useRef, useEffect, FormEvent } from 'react';
 import { Autocomplete } from '@react-google-maps/api';
@@ -12,7 +11,6 @@ import { Neighborhood } from '@/api/neighborhoods';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
 
 interface Props {
@@ -27,7 +25,6 @@ export default function AddShopForm({ neighborhoods, onShopAdded, onCancel }: Pr
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
   const [placeId, setPlaceId] = useState('');
-  const [description, setDescription] = useState('');
   const [neighborhoodId, setNeighborhoodId] = useState<number | ''>('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -72,7 +69,6 @@ export default function AddShopForm({ neighborhoods, onShopAdded, onCancel }: Pr
         latitude: lat,
         longitude: lng,
         google_place_id: placeId || undefined,
-        description: description || undefined,
         neighborhood_id: neighborhoodId as number,
       });
       onShopAdded();
@@ -93,7 +89,7 @@ export default function AddShopForm({ neighborhoods, onShopAdded, onCancel }: Pr
         <Autocomplete
           onLoad={(ac) => { autocompleteRef.current = ac; }}
           onPlaceChanged={handlePlaceChanged}
-          types={['cafe', 'coffee_shop', 'bakery', 'restaurant']}
+          types={['cafe']}
           fields={['name', 'formatted_address', 'geometry.location', 'place_id']}
         >
           <Input
@@ -132,17 +128,6 @@ export default function AddShopForm({ neighborhoods, onShopAdded, onCancel }: Pr
             </option>
           ))}
         </Select>
-      </div>
-
-      <div className="space-y-1">
-        <Label htmlFor="desc">Description (optional)</Label>
-        <Textarea
-          id="desc"
-          rows={2}
-          placeholder="Anything special about this place?"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
