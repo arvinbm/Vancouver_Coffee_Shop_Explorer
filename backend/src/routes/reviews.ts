@@ -21,7 +21,7 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     const result = await pool.query(
-      `SELECT r.id, r.rating, r.body, r.created_at,
+      `SELECT r.id, r.rating, r.body AS comment, r.created_at,
               u.username
        FROM reviews r
        LEFT JOIN users u ON r.user_id = u.id
@@ -37,13 +37,14 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/reviews — protected
+// POST /api/shops/:id/reviews — protected
 router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
-  const { coffee_shop_id, rating, body } = req.body;
+  const { id: coffee_shop_id } = req.params;
+  const { rating, comment } = req.body;
   const userId = req.user!.userId;
 
-  if (!coffee_shop_id || !rating) {
-    res.status(400).json({ error: 'coffee_shop_id and rating are required' });
+  if (!rating) {
+    res.status(400).json({ error: 'rating is required' });
     return;
   }
 
@@ -68,7 +69,7 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
       `INSERT INTO reviews (user_id, coffee_shop_id, rating, body)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [userId, coffee_shop_id, rating, body]
+      [userId, coffee_shop_id, rating, comment ?? null]
     );
 
     res.status(201).json(result.rows[0]);
