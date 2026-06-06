@@ -1,7 +1,7 @@
 -- 003_seed.sql
 --
--- Seeds the database with 20 Vancouver neighbourhoods and one popular
--- coffee shop per neighbourhood.
+-- Seeds the database with 30 neighbourhoods (Vancouver, Burnaby, West Vancouver,
+-- North Vancouver, Surrey) and one popular coffee shop per neighbourhood.
 --
 -- Runs automatically after 001_init.sql and 002_users_reviews.sql on first boot.
 -- To reset and re-run: docker compose down -v && docker compose up
@@ -11,26 +11,36 @@
 -- The coffee shop INSERTs below reference these ids directly.
 
 INSERT INTO neighborhoods (name) VALUES
-    ('Kitsilano'),
-    ('Mount Pleasant'),
-    ('Commercial Drive'),
-    ('Downtown'),
-    ('Gastown'),
-    ('Yaletown'),
-    ('Main Street'),
-    ('Fairview'),
-    ('West End'),
-    ('Coal Harbour'),
-    ('Strathcona'),
-    ('Chinatown'),
-    ('South Granville'),
-    ('Kerrisdale'),
-    ('Dunbar'),
-    ('Point Grey'),
-    ('Hastings-Sunrise'),
-    ('Grandview-Woodland'),
-    ('Olympic Village'),
-    ('Cambie Village')
+    ('Kitsilano'),           -- 1
+    ('Mount Pleasant'),      -- 2
+    ('Commercial Drive'),    -- 3
+    ('Downtown'),            -- 4
+    ('Gastown'),             -- 5
+    ('Yaletown'),            -- 6
+    ('Main Street'),         -- 7
+    ('Fairview'),            -- 8
+    ('West End'),            -- 9
+    ('Coal Harbour'),        -- 10
+    ('Strathcona'),          -- 11
+    ('Chinatown'),           -- 12
+    ('South Granville'),     -- 13
+    ('Kerrisdale'),          -- 14
+    ('Dunbar'),              -- 15
+    ('Point Grey'),          -- 16
+    ('Hastings-Sunrise'),    -- 17
+    ('Grandview-Woodland'),  -- 18
+    ('Olympic Village'),     -- 19
+    ('Cambie Village'),      -- 20
+    ('Burnaby Heights'),     -- 21
+    ('Metrotown'),           -- 22
+    ('Brentwood'),           -- 23
+    ('Ambleside'),           -- 24
+    ('Dundarave'),           -- 25
+    ('Lower Lonsdale'),      -- 26
+    ('Central Lonsdale'),    -- 27
+    ('Surrey City Centre'),  -- 28
+    ('White Rock'),          -- 29
+    ('Guildford')            -- 30
 ON CONFLICT (name) DO NOTHING;
 
 -- ── Coffee shops ──────────────────────────────────────────────────────────────
@@ -258,4 +268,114 @@ VALUES
         'https://milanocoffee.ca',
         '604-877-6662',
         'https://maps.app.goo.gl/MilanoCambie'
+    ),
+
+    -- 21. Burnaby Heights
+    (
+        'JJ Bean Coffee',
+        '3456 E Hastings St, Burnaby, BC',
+        21,
+        49.280200, -122.980500,
+        'https://jjbeancoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 22. Metrotown
+    (
+        'Blenz Coffee',
+        '4700 Kingsway, Burnaby, BC',
+        22,
+        49.226700, -123.000000,
+        'https://blenz.com',
+        NULL,
+        NULL
+    ),
+
+    -- 23. Brentwood
+    (
+        'Analog Coffee',
+        '1635 Burquitlam Plaza, Burnaby, BC',
+        23,
+        49.266700, -123.000200,
+        NULL,
+        NULL,
+        NULL
+    ),
+
+    -- 24. Ambleside
+    (
+        'Savary Island Pie Company',
+        '1533 Marine Dr, West Vancouver, BC',
+        24,
+        49.326800, -123.161700,
+        NULL,
+        '604-926-4021',
+        NULL
+    ),
+
+    -- 25. Dundarave
+    (
+        'Bean Around the World',
+        '2505 Marine Dr, West Vancouver, BC',
+        25,
+        49.333300, -123.190000,
+        'https://beanaround.ca',
+        NULL,
+        NULL
+    ),
+
+    -- 26. Lower Lonsdale
+    (
+        'Moja Coffee',
+        '124 W 1st St, North Vancouver, BC',
+        26,
+        49.310000, -123.073300,
+        'https://mojacoffee.com',
+        '604-985-5163',
+        NULL
+    ),
+
+    -- 27. Central Lonsdale
+    (
+        'JJ Bean Coffee',
+        '1305 Lonsdale Ave, North Vancouver, BC',
+        27,
+        49.320000, -123.066700,
+        'https://jjbeancoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 28. Surrey City Centre
+    (
+        'Waves Coffee House',
+        '13450 104 Ave, Surrey, BC',
+        28,
+        49.189500, -122.849400,
+        'https://wavescoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 29. White Rock
+    (
+        'Coho Coffee',
+        '15040 Marine Dr, White Rock, BC',
+        29,
+        49.021300, -122.803100,
+        NULL,
+        NULL,
+        NULL
+    ),
+
+    -- 30. Guildford
+    (
+        'Waves Coffee House',
+        '15355 104 Ave, Surrey, BC',
+        30,
+        49.183300, -122.800000,
+        'https://wavescoffee.com',
+        NULL,
+        NULL
     );
