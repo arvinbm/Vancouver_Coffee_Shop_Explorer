@@ -10,19 +10,25 @@ router.get('/', async (req: Request, res: Response) => {
   const { neighborhood_id } = req.query;
 
   try {
-    let query = `
-      SELECT cs.*, n.name AS neighborhood_name
-      FROM coffee_shops cs
-      LEFT JOIN neighborhoods n ON cs.neighborhood_id = n.id
-    `;
     const params: unknown[] = [];
+    let whereClause = '';
 
     if (neighborhood_id) {
-      query += ' WHERE cs.neighborhood_id = $1';
+      whereClause = 'WHERE cs.neighborhood_id = $1';
       params.push(neighborhood_id);
     }
 
-    query += ' ORDER BY cs.name ASC';
+    const query = `
+      SELECT cs.*, n.name AS neighborhood_name,
+        ROUND(AVG(r.rating)::numeric, 1) AS avg_rating,
+        COUNT(r.id) AS review_count
+      FROM coffee_shops cs
+      LEFT JOIN neighborhoods n ON cs.neighborhood_id = n.id
+      LEFT JOIN reviews r ON r.coffee_shop_id = cs.id
+      ${whereClause}
+      GROUP BY cs.id, n.name
+      ORDER BY cs.name ASC
+    `;
 
     const result = await pool.query(query, params);
     res.json(result.rows);
@@ -38,10 +44,14 @@ router.get('/:id', async (req: Request, res: Response) => {
 
   try {
     const result = await pool.query(
-      `SELECT cs.*, n.name AS neighborhood_name
+      `SELECT cs.*, n.name AS neighborhood_name,
+        ROUND(AVG(r.rating)::numeric, 1) AS avg_rating,
+        COUNT(r.id) AS review_count
        FROM coffee_shops cs
        LEFT JOIN neighborhoods n ON cs.neighborhood_id = n.id
-       WHERE cs.id = $1`,
+       LEFT JOIN reviews r ON r.coffee_shop_id = cs.id
+       WHERE cs.id = $1
+       GROUP BY cs.id, n.name`,
       [id]
     );
 

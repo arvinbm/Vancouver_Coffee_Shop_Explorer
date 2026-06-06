@@ -11,6 +11,8 @@ export interface CoffeeShop {
   google_place_id: string | null;
   neighborhood_id: number;
   neighborhood_name: string;
+  avg_rating: string | null;
+  review_count: string;
 }
 
 export interface CreateShopPayload {

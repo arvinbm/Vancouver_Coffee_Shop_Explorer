@@ -116,7 +116,14 @@ export default function MapPage() {
                 onClick={() => handleShopClick(shop)}
               >
                 <p className="font-medium text-sm truncate">{shop.name}</p>
-                <p className="text-xs text-muted-foreground truncate">{shop.neighborhood_name}</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground truncate">{shop.neighborhood_name}</p>
+                  {shop.avg_rating && (
+                    <p className="text-xs text-amber-500 shrink-0 ml-2">
+                      ★ {shop.avg_rating}
+                    </p>
+                  )}
+                </div>
               </button>
             </li>
           ))}
@@ -162,6 +169,11 @@ export default function MapPage() {
                 {hoveredMarkerId === shop.id && (
                   <InfoWindow onCloseClick={() => setHoveredMarkerId(null)}>
                     <div className="text-sm font-medium">{shop.name}</div>
+                    {shop.avg_rating && (
+                      <div className="text-xs text-amber-500 mt-0.5">
+                        ★ {shop.avg_rating} ({shop.review_count} review{Number(shop.review_count) !== 1 ? 's' : ''})
+                      </div>
+                    )}
                   </InfoWindow>
                 )}
               </Marker>
