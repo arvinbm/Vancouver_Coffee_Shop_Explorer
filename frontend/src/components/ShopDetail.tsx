@@ -4,11 +4,12 @@
 // Logged-in users see a review form at the bottom.
 
 import { useEffect, useState } from 'react';
-import { getReviews, Review } from '@/api/reviews';
+import { getReviews, deleteReview, Review } from '@/api/reviews';
 import { CoffeeShop } from '@/api/shops';
 import { useAuth } from '@/context/AuthContext';
 import ReviewForm from './ReviewForm';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 interface Props {
   shop: CoffeeShop;
@@ -29,6 +30,21 @@ export default function ShopDetail({ shop, onClose, onReviewAdded }: Props) {
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  async function handleDeleteReview(reviewId: number) {
+    setDeletingId(reviewId);
+    try {
+      await deleteReview(shop.id, reviewId);
+      toast.success('Review deleted');
+      fetchReviews();
+      onReviewAdded?.();
+    } catch {
+      toast.error('Could not delete review');
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   const userHasReviewed = reviews.some((r) => r.username === user?.username);
 
@@ -89,7 +105,19 @@ export default function ShopDetail({ shop, onClose, onReviewAdded }: Props) {
               <div key={r.id} className="text-sm border rounded-lg p-3 space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{r.username}</span>
-                  <StarRating rating={r.rating} />
+                  <div className="flex items-center gap-2">
+                    <StarRating rating={r.rating} />
+                    {user?.username === r.username && (
+                      <button
+                        onClick={() => handleDeleteReview(r.id)}
+                        disabled={deletingId === r.id}
+                        className="text-muted-foreground hover:text-destructive transition-colors disabled:opacity-40"
+                        title="Delete your review"
+                      >
+                        🗑
+                      </button>
+                    )}
+                  </div>
                 </div>
                 {r.comment && <p className="text-muted-foreground">{r.comment}</p>}
                 <p className="text-xs text-muted-foreground">

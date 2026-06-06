@@ -83,4 +83,25 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
   }
 });
 
+// DELETE /api/shops/:id/reviews/:reviewId — protected, own reviews only
+router.delete('/:reviewId', authenticate, async (req: AuthRequest, res: Response) => {
+  const { id: shopId, reviewId } = req.params;
+  const userId = req.user!.userId;
+
+  try {
+    const result = await pool.query(
+      'DELETE FROM reviews WHERE id = $1 AND coffee_shop_id = $2 AND user_id = $3 RETURNING id',
+      [reviewId, shopId, userId]
+    );
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Review not found or not yours' });
+      return;
+    }
+    res.status(204).send();
+  } catch (err) {
+    console.error('[reviews] DELETE /:reviewId error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;

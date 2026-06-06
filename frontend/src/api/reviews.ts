@@ -20,3 +20,6 @@ export const getReviews = (shopId: number) =>
 
 export const createReview = (shopId: number, data: CreateReviewPayload) =>
   client.post<Review>(`/shops/${shopId}/reviews`, data);
+
+export const deleteReview = (shopId: number, reviewId: number) =>
+  client.delete(`/shops/${shopId}/reviews/${reviewId}`);
