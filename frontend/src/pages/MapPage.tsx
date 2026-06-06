@@ -6,7 +6,7 @@
 // Clicking a shop in the list OR a map marker opens ShopDetail panel.
 // Logged-in users can open the AddShopForm via a button in the sidebar.
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { GoogleMap, useJsApiLoader, OverlayView } from '@react-google-maps/api';
 import { getShops, CoffeeShop } from '@/api/shops';
 import { getNeighborhoods, Neighborhood } from '@/api/neighborhoods';
@@ -43,6 +43,7 @@ export default function MapPage() {
   const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'rating' | 'reviews'>('name');
+  const shopRefs = useRef<Record<number, HTMLButtonElement | null>>({});
 
   // Hover preview takes priority over a permanent selection.
   const displayShop = hoveredSidebarShop ?? selectedShop;
@@ -74,6 +75,10 @@ export default function MapPage() {
     if (mapRef) {
       mapRef.panTo({ lat: parseFloat(shop.latitude), lng: parseFloat(shop.longitude) });
     }
+    // Scroll the sidebar list to this shop
+    setTimeout(() => {
+      shopRefs.current[shop.id]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
   }
 
   function handleShopAdded() {
@@ -140,6 +145,7 @@ export default function MapPage() {
           {filteredShops.map((shop) => (
             <li key={shop.id}>
               <button
+                ref={(el) => { shopRefs.current[shop.id] = el; }}
                 className={`group w-full text-left px-3 py-3 hover:bg-accent transition-colors ${
                   selectedShop?.id === shop.id ? 'bg-accent' : ''
                 }`}
