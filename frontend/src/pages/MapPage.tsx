@@ -110,7 +110,7 @@ export default function MapPage() {
           {shops.map((shop) => (
             <li key={shop.id}>
               <button
-                className={`w-full text-left px-3 py-3 hover:bg-accent transition-colors ${
+                className={`group w-full text-left px-3 py-3 hover:bg-accent transition-colors ${
                   selectedShop?.id === shop.id ? 'bg-accent' : ''
                 }`}
                 onClick={() => handleShopClick(shop)}
@@ -119,8 +119,8 @@ export default function MapPage() {
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground truncate">{shop.neighborhood_name}</p>
                   {shop.avg_rating && (
-                    <p className="text-xs text-amber-500 shrink-0 ml-2">
-                      ★ {shop.avg_rating}
+                    <p className="text-xs text-amber-500 shrink-0 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      ★ {shop.avg_rating} · {shop.review_count} review{Number(shop.review_count) !== 1 ? 's' : ''}
                     </p>
                   )}
                 </div>
