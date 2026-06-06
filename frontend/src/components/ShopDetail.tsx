@@ -51,7 +51,7 @@ export default function ShopDetail({ shop, onClose }: Props) {
       : null;
 
   return (
-    <div className="h-full flex flex-col bg-white border-l overflow-y-auto">
+    <div className="h-full flex flex-col bg-background border-l overflow-y-auto">
       {/* Header */}
       <div className="flex items-start justify-between p-4 border-b">
         <div>

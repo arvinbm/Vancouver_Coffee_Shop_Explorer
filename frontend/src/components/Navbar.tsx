@@ -8,7 +8,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="h-14 border-b bg-white flex items-center px-4 gap-4 shrink-0">
+    <header className="h-14 border-b bg-background flex items-center px-4 gap-4 shrink-0">
       <Link to="/" className="font-semibold text-base tracking-tight">
         ☕ Vancouver Coffee Explorer
       </Link>

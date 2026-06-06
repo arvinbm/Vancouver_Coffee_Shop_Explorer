@@ -78,7 +78,7 @@ export default function MapPage() {
   return (
     <div className="flex flex-1 overflow-hidden">
       {/* ── Sidebar ── */}
-      <aside className="w-72 shrink-0 flex flex-col border-r bg-white overflow-y-auto">
+      <aside className="w-72 shrink-0 flex flex-col border-r bg-background overflow-y-auto">
         <div className="p-3 border-b space-y-2">
           <Select
             value={selectedNeighborhood}
@@ -110,8 +110,8 @@ export default function MapPage() {
           {shops.map((shop) => (
             <li key={shop.id}>
               <button
-                className={`w-full text-left px-3 py-3 hover:bg-slate-50 transition-colors ${
-                  selectedShop?.id === shop.id ? 'bg-slate-100' : ''
+                className={`w-full text-left px-3 py-3 hover:bg-accent transition-colors ${
+                  selectedShop?.id === shop.id ? 'bg-accent' : ''
                 }`}
                 onClick={() => handleShopClick(shop)}
               >
@@ -169,7 +169,7 @@ export default function MapPage() {
 
       {/* ── Detail / Add panel ── */}
       {(selectedShop || showAddForm) && (
-        <div className="w-80 shrink-0 overflow-y-auto border-l bg-white">
+        <div className="w-80 shrink-0 overflow-y-auto border-l bg-background">
           {selectedShop && !showAddForm && (
             <ShopDetail shop={selectedShop} onClose={() => setSelectedShop(null)} />
           )}
