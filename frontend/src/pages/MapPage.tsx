@@ -168,12 +168,14 @@ export default function MapPage() {
               >
                 {hoveredMarkerId === shop.id && (
                   <InfoWindow onCloseClick={() => setHoveredMarkerId(null)}>
-                    <div className="text-sm font-medium">{shop.name}</div>
-                    {shop.avg_rating && (
-                      <div className="text-xs text-amber-500 mt-0.5">
-                        ★ {shop.avg_rating} ({shop.review_count} review{Number(shop.review_count) !== 1 ? 's' : ''})
-                      </div>
-                    )}
+                    <div>
+                      <div className="text-sm font-medium">{shop.name}</div>
+                      {shop.avg_rating && (
+                        <div className="text-xs text-amber-500 mt-0.5">
+                          ★ {shop.avg_rating} ({shop.review_count} review{Number(shop.review_count) !== 1 ? 's' : ''})
+                        </div>
+                      )}
+                    </div>
                   </InfoWindow>
                 )}
               </Marker>
