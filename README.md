@@ -8,10 +8,6 @@ A full-stack web app to discover, filter, and review coffee shops across Vancouv
 
 ## Demo
 
-![App demo](docs/demo.gif)
-
-> **To add screenshots:** open the app at `http://localhost:5173`, press **⌘ Shift 4** to capture each view below, save them as shown, then they'll appear automatically in this table.
-
 | Map & markers | Shop detail + reviews | Search & sort | Login |
 |---|---|---|---|
 | ![Map](docs/screenshots/01_map.png) | ![Detail](docs/screenshots/02_detail.png) | ![Search](docs/screenshots/03_search.png) | ![Login](docs/screenshots/04_login.png) |
