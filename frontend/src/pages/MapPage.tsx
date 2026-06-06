@@ -192,7 +192,7 @@ export default function MapPage() {
       {(selectedShop || showAddForm) && (
         <div className="w-80 shrink-0 overflow-y-auto border-l bg-background">
           {selectedShop && !showAddForm && (
-            <ShopDetail shop={selectedShop} onClose={() => setSelectedShop(null)} />
+            <ShopDetail shop={selectedShop} onClose={() => setSelectedShop(null)} onReviewAdded={fetchShops} />
           )}
           {showAddForm && (
             <div className="p-4">

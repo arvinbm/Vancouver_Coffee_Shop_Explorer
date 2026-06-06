@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 interface Props {
   shop: CoffeeShop;
   onClose: () => void;
+  onReviewAdded?: () => void;
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -24,7 +25,7 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export default function ShopDetail({ shop, onClose }: Props) {
+export default function ShopDetail({ shop, onClose, onReviewAdded }: Props) {
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
@@ -115,7 +116,7 @@ export default function ShopDetail({ shop, onClose }: Props) {
           {user && !userHasReviewed && (
             <>
               <h3 className="font-medium text-sm mb-2">Leave a review</h3>
-              <ReviewForm shopId={shop.id} onReviewAdded={fetchReviews} />
+              <ReviewForm shopId={shop.id} onReviewAdded={() => { fetchReviews(); onReviewAdded?.(); }} />
             </>
           )}
         </div>
