@@ -153,10 +153,10 @@ export default function MapPage() {
                 onMouseOut={() => setHoveredMarkerId(null)}
                 icon={{
                   url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
-                    `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><text y="20" font-size="20">☕</text></svg>`
+                    `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><text y="20" font-size="20">☕</text></svg>`
                   )}`,
-                  scaledSize: new google.maps.Size(32, 32),
-                  anchor: new google.maps.Point(16, 32),
+                  scaledSize: new google.maps.Size(40, 40),
+                  anchor: new google.maps.Point(20, 40),
                 }}
               >
                 {hoveredMarkerId === shop.id && (
