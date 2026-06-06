@@ -1,7 +1,7 @@
 -- 003_seed.sql
 --
--- Seeds the database with 30 neighbourhoods (Vancouver, Burnaby, West Vancouver,
--- North Vancouver, Surrey) and one popular coffee shop per neighbourhood.
+-- Seeds the database with 50 neighbourhoods across Greater Vancouver
+-- and one popular coffee shop per neighbourhood.
 --
 -- Runs automatically after 001_init.sql and 002_users_reviews.sql on first boot.
 -- To reset and re-run: docker compose down -v && docker compose up
@@ -40,7 +40,27 @@ INSERT INTO neighborhoods (name) VALUES
     ('Central Lonsdale'),    -- 27
     ('Surrey City Centre'),  -- 28
     ('White Rock'),          -- 29
-    ('Guildford')            -- 30
+    ('Guildford'),           -- 30
+    ('Coquitlam Centre'),    -- 31
+    ('Richmond Centre'),     -- 32
+    ('Port Coquitlam'),      -- 33
+    ('Port Moody'),          -- 34
+    ('New Westminster'),     -- 35
+    ('Langley City'),        -- 36
+    ('Willowbrook'),         -- 37
+    ('Ladner'),              -- 38
+    ('Tsawwassen'),          -- 39
+    ('Maple Ridge'),         -- 40
+    ('Pitt Meadows'),        -- 41
+    ('Abbotsford'),          -- 42
+    ('Mission'),             -- 43
+    ('Deep Cove'),           -- 44
+    ('Lynn Valley'),         -- 45
+    ('Marpole'),             -- 46
+    ('Renfrew-Collingwood'), -- 47
+    ('UBC'),                 -- 48
+    ('Steveston'),           -- 49
+    ('Cloverdale')           -- 50
 ON CONFLICT (name) DO NOTHING;
 
 -- ── Coffee shops ──────────────────────────────────────────────────────────────
@@ -375,6 +395,226 @@ VALUES
         '15355 104 Ave, Surrey, BC',
         30,
         49.183300, -122.800000,
+        'https://wavescoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 31. Coquitlam Centre
+    (
+        'Waves Coffee House',
+        '2929 Barnet Hwy, Coquitlam, BC',
+        31,
+        49.284000, -122.792000,
+        'https://wavescoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 32. Richmond Centre
+    (
+        'JJ Bean Coffee',
+        '6551 No 3 Rd, Richmond, BC',
+        32,
+        49.166700, -123.133300,
+        'https://jjbeancoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 33. Port Coquitlam
+    (
+        'Waves Coffee House',
+        '2755 Lougheed Hwy, Port Coquitlam, BC',
+        33,
+        49.262000, -122.781000,
+        'https://wavescoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 34. Port Moody
+    (
+        'Relay Coffee Roasters',
+        '2306 St Johns St, Port Moody, BC',
+        34,
+        49.283000, -122.833000,
+        NULL,
+        NULL,
+        NULL
+    ),
+
+    -- 35. New Westminster
+    (
+        'JJ Bean Coffee',
+        '810 Quayside Dr, New Westminster, BC',
+        35,
+        49.205700, -122.911000,
+        'https://jjbeancoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 36. Langley City
+    (
+        'Blenz Coffee',
+        '20159 Fraser Hwy, Langley, BC',
+        36,
+        49.100000, -122.660000,
+        'https://blenz.com',
+        NULL,
+        NULL
+    ),
+
+    -- 37. Willowbrook
+    (
+        'Waves Coffee House',
+        '19705 Fraser Hwy, Langley, BC',
+        37,
+        49.130000, -122.650000,
+        'https://wavescoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 38. Ladner
+    (
+        'Waves Coffee House',
+        '4900 Delta St, Delta, BC',
+        38,
+        49.090000, -123.080000,
+        'https://wavescoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 39. Tsawwassen
+    (
+        'Blenz Coffee',
+        '5000 Canoe Pass Way, Tsawwassen, BC',
+        39,
+        49.016700, -123.080000,
+        'https://blenz.com',
+        NULL,
+        NULL
+    ),
+
+    -- 40. Maple Ridge
+    (
+        'Waves Coffee House',
+        '22728 Lougheed Hwy, Maple Ridge, BC',
+        40,
+        49.219000, -122.598000,
+        'https://wavescoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 41. Pitt Meadows
+    (
+        'Blenz Coffee',
+        '19150 Lougheed Hwy, Pitt Meadows, BC',
+        41,
+        49.221000, -122.689000,
+        'https://blenz.com',
+        NULL,
+        NULL
+    ),
+
+    -- 42. Abbotsford
+    (
+        'JJ Bean Coffee',
+        '2070 Abbotsford Way, Abbotsford, BC',
+        42,
+        49.050000, -122.300000,
+        'https://jjbeancoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 43. Mission
+    (
+        'Waves Coffee House',
+        '32555 London Ave, Mission, BC',
+        43,
+        49.133000, -122.300000,
+        'https://wavescoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 44. Deep Cove
+    (
+        'Honey Doughnuts & Goodies',
+        '4373 Gallant Ave, North Vancouver, BC',
+        44,
+        49.326700, -122.948300,
+        NULL,
+        '604-929-4666',
+        NULL
+    ),
+
+    -- 45. Lynn Valley
+    (
+        'JJ Bean Coffee',
+        '1199 Lynn Valley Rd, North Vancouver, BC',
+        45,
+        49.346700, -123.023300,
+        'https://jjbeancoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 46. Marpole
+    (
+        'Elysian Coffee',
+        '8573 Granville St, Vancouver, BC',
+        46,
+        49.210000, -123.130000,
+        'https://elysiancoffee.ca',
+        NULL,
+        NULL
+    ),
+
+    -- 47. Renfrew-Collingwood
+    (
+        'JJ Bean Coffee',
+        '3375 Kingsway, Vancouver, BC',
+        47,
+        49.240000, -123.040000,
+        'https://jjbeancoffee.com',
+        NULL,
+        NULL
+    ),
+
+    -- 48. UBC
+    (
+        'Agora Cafe',
+        '6138 Student Union Blvd, Vancouver, BC',
+        48,
+        49.260600, -123.246000,
+        NULL,
+        NULL,
+        NULL
+    ),
+
+    -- 49. Steveston
+    (
+        'Steveston Coffee Company',
+        '3711 Chatham St, Richmond, BC',
+        49,
+        49.126700, -123.183300,
+        NULL,
+        '604-271-0505',
+        NULL
+    ),
+
+    -- 50. Cloverdale
+    (
+        'Waves Coffee House',
+        '17700 56 Ave, Surrey, BC',
+        50,
+        49.096700, -122.730000,
         'https://wavescoffee.com',
         NULL,
         NULL
