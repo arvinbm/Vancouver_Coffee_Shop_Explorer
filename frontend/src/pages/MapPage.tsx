@@ -168,11 +168,9 @@ export default function MapPage() {
                   <InfoWindow onCloseClick={() => setHoveredMarkerId(null)}>
                     <div>
                       <div className="text-sm font-medium">{shop.name}</div>
-                      {shop.avg_rating && (
-                        <div className="text-xs text-amber-500 mt-0.5">
-                          ★ {shop.avg_rating} ({shop.review_count} review{Number(shop.review_count) !== 1 ? 's' : ''})
-                        </div>
-                      )}
+                      <div className="text-xs text-amber-500 mt-0.5">
+                        ★ {shop.avg_rating ?? '0.0'} · {shop.review_count} review{Number(shop.review_count) !== 1 ? 's' : ''}
+                      </div>
                     </div>
                   </InfoWindow>
                 )}
