@@ -1,6 +1,36 @@
-# Vancouver Coffee Explorer
+# ☕ Vancouver Coffee Explorer
 
-A full-stack web application to discover and filter Vancouver coffee shops on an interactive map. Built to learn and demonstrate a production-grade stack: React + TypeScript on the front end, Node.js/Express on the back end, PostgreSQL as the database, all wired together with Docker Compose.
+A full-stack web app to discover, filter, and review coffee shops across Vancouver and the Lower Mainland on an interactive map.
+
+> Built as a learning project to demonstrate a production-grade stack: React + TypeScript on the front end, Node.js/Express on the back end, PostgreSQL as the database — all containerised with Docker Compose.
+
+---
+
+## Demo
+
+![App demo](docs/demo.gif)
+
+> **To add screenshots:** open the app at `http://localhost:5173`, press **⌘ Shift 4** to capture each view below, save them as shown, then they'll appear automatically in this table.
+
+| Map & markers | Shop detail + reviews | Search & sort | Login |
+|---|---|---|---|
+| ![Map](docs/screenshots/01_map.png) | ![Detail](docs/screenshots/02_detail.png) | ![Search](docs/screenshots/03_search.png) | ![Login](docs/screenshots/04_login.png) |
+
+---
+
+## Features
+
+- **Interactive map** — ☕ emoji markers for every shop; hover to see its name and rating; click to open the detail panel; selected marker animates to 1.75×
+- **Sidebar shop list** — hover a row to pan the map to that location and preview its details; click to lock the selection and scroll the sidebar to it
+- **Live search** — filters both the sidebar list and map markers as you type
+- **Sort** — order by A → Z, top rated, or most reviewed
+- **Neighbourhood filter** — 50 neighbourhoods across Vancouver, Burnaby, North/West Van, Surrey, Richmond, Coquitlam, and more
+- **Animated detail panel** — slides in from the right with a smooth width transition
+- **Reviews** — star ratings (1–5) + optional comment; average shown in sidebar, map tooltip, and detail panel
+- **Delete your own review** — trash icon on reviews you wrote; ratings update instantly
+- **Auth** — JWT-based sign-up / login; protected routes for writing reviews and adding shops
+- **Add a shop** — authenticated users submit via Google Places Autocomplete
+- **Toast notifications** — warm brown success/error toasts on every action
 
 ---
 
@@ -8,9 +38,12 @@ A full-stack web application to discover and filter Vancouver coffee shops on an
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 18 + TypeScript + Vite |
-| Backend | Node.js + Express + TypeScript |
+| Frontend | React 18 · TypeScript · Vite |
+| Styling | Tailwind CSS · shadcn/ui · Plus Jakarta Sans |
+| Maps | Google Maps JS API · `@react-google-maps/api` |
+| Backend | Node.js · Express · TypeScript |
 | Database | PostgreSQL 16 |
+| Auth | JWT · bcrypt |
 | Dev environment | Docker Compose |
 
 ---
@@ -19,28 +52,33 @@ A full-stack web application to discover and filter Vancouver coffee shops on an
 
 ```
 Vancouver_Coffee_Shop_Explorer/
-├── docker-compose.yml        # Defines postgres, backend, and frontend services
+├── docker-compose.yml
+├── .env.example                    ← copy to .env and fill in keys
 ├── db/
-│   └── 001_init.sql          # Schema (runs automatically on first `docker compose up`)
+│   ├── 001_init.sql                ← schema: users, coffee_shops, neighborhoods, reviews
+│   ├── 002_seed_neighborhoods.sql
+│   └── 003_seed.sql                ← 50 neighbourhoods + 50 seed coffee shops
 ├── backend/
-│   ├── Dockerfile
-│   ├── .env.example          # Copy to .env and fill in values
-│   ├── tsconfig.json
-│   ├── package.json
+│   ├── Dockerfile                  ← two-stage build (compile TS → run JS)
 │   └── src/
-│       ├── index.ts          # Express app entry point
-│       ├── db/
-│       │   └── index.ts      # Shared pg connection pool
+│       ├── index.ts
+│       ├── db/index.ts             ← shared pg connection pool
+│       ├── middleware/auth.ts      ← JWT authenticate middleware
 │       └── routes/
-│           └── index.ts      # API router — /api/health + future routes
+│           ├── index.ts            ← mounts all routers
+│           ├── auth.ts             ← POST /auth/signup  POST /auth/login
+│           ├── shops.ts            ← GET/POST /shops   GET /shops/:id
+│           ├── reviews.ts          ← GET/POST/DELETE /shops/:id/reviews
+│           └── neighborhoods.ts    ← GET /neighborhoods
 └── frontend/
     ├── Dockerfile
-    ├── vite.config.ts        # Dev server + /api proxy to backend
-    ├── tsconfig.json
-    ├── index.html
+    ├── vite.config.ts              ← /api proxy → backend:4000
     └── src/
-        ├── main.tsx          # React entry point
-        └── App.tsx           # Root component (health check + feature checklist)
+        ├── api/                    ← axios client + typed helpers (shops, reviews, auth)
+        ├── components/             ← Navbar, ShopDetail, ReviewForm, AddShopForm
+        ├── components/ui/          ← shadcn/ui primitives (Button, Input, Card …)
+        ├── context/AuthContext.tsx ← JWT state via React Context
+        └── pages/                  ← MapPage, LoginPage, SignupPage
 ```
 
 ---
@@ -49,38 +87,76 @@ Vancouver_Coffee_Shop_Explorer/
 
 ### Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- That's it — Node and Postgres run inside containers.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) — Node and Postgres run inside containers.
+- A [Google Maps API key](https://console.cloud.google.com/) with **Maps JavaScript API** and **Places API** enabled.
 
-### Run
+### 1 — Clone & configure
 
 ```bash
 git clone https://github.com/arvinbm/Vancouver_Coffee_Shop_Explorer.git
 cd Vancouver_Coffee_Shop_Explorer
+cp .env.example .env
+```
+
+Edit `.env`:
+
+```env
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
+JWT_SECRET=any_long_random_string
+```
+
+### 2 — Start
+
+```bash
 docker compose up --build
 ```
 
 | Service | URL |
 |---|---|
-| Frontend (React) | http://localhost:5173 |
-| Backend (API) | http://localhost:4000 |
+| App | http://localhost:5173 |
+| API | http://localhost:4000 |
 | Health check | http://localhost:4000/api/health |
-| Postgres | localhost:**5433** (not 5432 — avoids clashing with a local install) |
+| Postgres (host) | localhost:5433 |
 
-### Connect to the database directly
+The database schema and seed data load automatically on first start.
+
+### 3 — Create an account
+
+Visit **http://localhost:5173/signup**, register, and you can immediately write reviews and add new coffee shops.
+
+---
+
+## API Reference
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/auth/signup` | — | Register a new user |
+| `POST` | `/api/auth/login` | — | Login, returns JWT |
+| `GET` | `/api/shops` | — | List shops (optional `?neighborhood_id=`) |
+| `GET` | `/api/shops/:id` | — | Single shop with avg rating + review count |
+| `POST` | `/api/shops` | ✓ | Add a new shop |
+| `GET` | `/api/shops/:id/reviews` | — | List reviews for a shop |
+| `POST` | `/api/shops/:id/reviews` | ✓ | Submit a review (one per user per shop) |
+| `DELETE` | `/api/shops/:id/reviews/:reviewId` | ✓ owner | Delete your own review |
+| `GET` | `/api/neighborhoods` | — | List all neighbourhoods |
+| `GET` | `/api/health` | — | Server + DB health check |
+
+---
+
+## Useful Commands
 
 ```bash
+# Rebuild just the backend after a code change
+docker compose up -d --build backend
+
+# Open a Postgres shell
 docker compose exec postgres psql -U postgres -d coffee_explorer
-```
 
-### Tear down (keep data)
-```bash
+# Stop everything (data kept)
 docker compose down
-```
 
-### Tear down and reset the database
-```bash
-docker compose down -v   # -v removes the named postgres_data volume
+# Stop and wipe the database
+docker compose down -v
 ```
 
 ---
@@ -88,30 +164,16 @@ docker compose down -v   # -v removes the named postgres_data volume
 ## How the pieces connect
 
 ```
-Browser (port 5173)
-  │
+Browser  (port 5173)
   │  /api/* requests
   ▼
-Vite dev server (proxy)
-  │
+Vite dev server  (proxy)
   │  forwards to backend:4000
   ▼
-Express API (port 4000)
-  │
-  │  SQL queries via pg Pool
+Express API  (port 4000)
+  │  SQL via pg Pool
   ▼
-PostgreSQL (port 5432 inside Docker, 5433 on host)
+PostgreSQL  (5432 inside Docker · 5433 on host)
 ```
 
-The Vite proxy (`vite.config.ts`) is the key dev-time trick: the browser only ever talks to `localhost:5173`, so there are no CORS issues in development. In production, Nginx or a load balancer would handle the same proxying.
-
----
-
-## What's built so far
-
-- [x] Docker Compose stack (Postgres + backend + frontend)
-- [x] PostgreSQL schema — `coffee_shops` and `neighborhoods` tables with indexes
-- [x] Express server with middleware (CORS, JSON body parser)
-- [x] Shared pg connection pool with error handling
-- [x] `GET /api/health` — verifies both the server and DB are reachable
-- [x] React + Vite shell with a health-check display
+The Vite proxy means the browser only ever talks to `localhost:5173` — no CORS issues in development. In production, Nginx or a cloud load balancer handles the same routing.
