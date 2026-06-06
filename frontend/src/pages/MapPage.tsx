@@ -7,7 +7,7 @@
 // Logged-in users can open the AddShopForm via a button in the sidebar.
 
 import { useEffect, useState, useCallback } from 'react';
-import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, OverlayView } from '@react-google-maps/api';
 import { getShops, CoffeeShop } from '@/api/shops';
 import { getNeighborhoods, Neighborhood } from '@/api/neighborhoods';
 import { useAuth } from '@/context/AuthContext';
@@ -15,6 +15,7 @@ import ShopDetail from '@/components/ShopDetail';
 import AddShopForm from '@/components/AddShopForm';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const LIBRARIES: ('places')[] = ['places'];
 
@@ -36,9 +37,18 @@ export default function MapPage() {
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<number | ''>('');
   const [selectedShop, setSelectedShop] = useState<CoffeeShop | null>(null);
+  const [hoveredSidebarShop, setHoveredSidebarShop] = useState<CoffeeShop | null>(null);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<number | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Hover preview takes priority over a permanent selection.
+  const displayShop = hoveredSidebarShop ?? selectedShop;
+
+  const filteredShops = shops.filter(s =>
+    s.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const fetchShops = useCallback(async () => {
     const { data } = await getShops(selectedNeighborhood || undefined);
@@ -56,7 +66,6 @@ export default function MapPage() {
   function handleShopClick(shop: CoffeeShop) {
     setSelectedShop(shop);
     setShowAddForm(false);
-    // Pan the map to the shop
     if (mapRef) {
       mapRef.panTo({ lat: parseFloat(shop.latitude), lng: parseFloat(shop.longitude) });
     }
@@ -94,6 +103,12 @@ export default function MapPage() {
             ))}
           </Select>
 
+          <Input
+            placeholder="Search shops…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+
           {user && (
             <Button
               size="sm"
@@ -107,13 +122,20 @@ export default function MapPage() {
         </div>
 
         <ul className="flex-1 divide-y">
-          {shops.map((shop) => (
+          {filteredShops.map((shop) => (
             <li key={shop.id}>
               <button
                 className={`group w-full text-left px-3 py-3 hover:bg-accent transition-colors ${
                   selectedShop?.id === shop.id ? 'bg-accent' : ''
                 }`}
                 onClick={() => handleShopClick(shop)}
+                onMouseEnter={() => {
+                  setHoveredSidebarShop(shop);
+                  if (mapRef) {
+                    mapRef.panTo({ lat: parseFloat(shop.latitude), lng: parseFloat(shop.longitude) });
+                  }
+                }}
+                onMouseLeave={() => setHoveredSidebarShop(null)}
               >
                 <p className="font-medium text-sm truncate">{shop.name}</p>
                 <div className="flex items-center justify-between">
@@ -125,7 +147,7 @@ export default function MapPage() {
               </button>
             </li>
           ))}
-          {shops.length === 0 && (
+          {filteredShops.length === 0 && (
             <li className="p-4 text-sm text-muted-foreground">No shops found.</li>
           )}
         </ul>
@@ -145,36 +167,59 @@ export default function MapPage() {
               fullscreenControl: false,
             }}
           >
-            {shops.map((shop) => (
-              <Marker
+            {filteredShops.map((shop) => (
+              <OverlayView
                 key={shop.id}
                 position={{
                   lat: parseFloat(shop.latitude),
                   lng: parseFloat(shop.longitude),
                 }}
-                title={shop.name}
-                onClick={() => handleShopClick(shop)}
-                onMouseOver={() => setHoveredMarkerId(shop.id)}
-                onMouseOut={() => setHoveredMarkerId(null)}
-                icon={{
-                  url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
-                    `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><text y="20" font-size="20">☕</text></svg>`
-                  )}`,
-                  scaledSize: new google.maps.Size(40, 40),
-                  anchor: new google.maps.Point(20, 40),
-                }}
+                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                getPixelPositionOffset={(w, h) => ({ x: -(w / 2), y: -h })}
               >
-                {hoveredMarkerId === shop.id && (
-                  <InfoWindow onCloseClick={() => setHoveredMarkerId(null)}>
-                    <div>
-                      <div className="text-sm font-medium">{shop.name}</div>
-                      <div className="text-xs text-amber-500 mt-0.5">
+                <div
+                  style={{ position: 'relative', width: 40, height: 40 }}
+                  onMouseEnter={() => setHoveredMarkerId(shop.id)}
+                  onMouseLeave={() => setHoveredMarkerId(null)}
+                  onClick={() => handleShopClick(shop)}
+                >
+                  {hoveredMarkerId === shop.id && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '100%',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      marginBottom: 6,
+                      background: 'white',
+                      borderRadius: 6,
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
+                      padding: '5px 9px',
+                      whiteSpace: 'nowrap',
+                      pointerEvents: 'none',
+                      zIndex: 10,
+                    }}>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{shop.name}</div>
+                      <div style={{ fontSize: 11, color: '#f59e0b', marginTop: 2 }}>
                         ★ {shop.avg_rating ?? '0.0'} · {shop.review_count} review{Number(shop.review_count) !== 1 ? 's' : ''}
                       </div>
                     </div>
-                  </InfoWindow>
-                )}
-              </Marker>
+                  )}
+                  <div
+                    style={{
+                      fontSize: 28,
+                      lineHeight: '40px',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                      transition: 'transform 0.25s ease-in-out',
+                      transform: displayShop?.id === shop.id ? 'scale(1.75)' : 'scale(1)',
+                      transformOrigin: 'bottom center',
+                    }}
+                  >
+                    ☕
+                  </div>
+                </div>
+              </OverlayView>
             ))}
           </GoogleMap>
         ) : (
@@ -185,10 +230,14 @@ export default function MapPage() {
       </div>
 
       {/* ── Detail / Add panel ── */}
-      {(selectedShop || showAddForm) && (
-        <div className="w-80 shrink-0 overflow-y-auto border-l bg-background">
-          {selectedShop && !showAddForm && (
-            <ShopDetail shop={selectedShop} onClose={() => setSelectedShop(null)} onReviewAdded={fetchShops} />
+      <div
+        className={`shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${
+          displayShop || showAddForm ? 'w-80' : 'w-0'
+        }`}
+      >
+        <div className="w-80 h-full overflow-y-auto bg-background border-l">
+          {displayShop && !showAddForm && (
+            <ShopDetail shop={displayShop} onClose={() => setSelectedShop(null)} onReviewAdded={fetchShops} />
           )}
           {showAddForm && (
             <div className="p-4">
@@ -209,7 +258,7 @@ export default function MapPage() {
             </div>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
