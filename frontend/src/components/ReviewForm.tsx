@@ -3,6 +3,7 @@
 // Shown inside ShopDetail for logged-in users who haven't reviewed the shop yet.
 
 import { useState, FormEvent } from 'react';
+import toast from 'react-hot-toast';
 import { createReview } from '@/api/reviews';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,12 +28,14 @@ export default function ReviewForm({ shopId, onReviewAdded }: Props) {
       await createReview(shopId, { rating, comment: comment || undefined });
       setComment('');
       setRating(5);
+      toast.success('Review submitted!');
       onReviewAdded();
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ??
         'Failed to submit review';
       setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

@@ -2,9 +2,10 @@
 //
 // Protected form — only visible to logged-in users.
 // Uses the Google Places Autocomplete widget to fill in name, address,
-// lat/lng, and place_id automatically. The user only has to pick a neighbourhood.
+// lat/lng, and place_id automatically. The user only has to pick a neighborhood.
 
 import { useState, useRef, useEffect, FormEvent } from 'react';
+import toast from 'react-hot-toast';
 import { Autocomplete } from '@react-google-maps/api';
 import { createShop } from '@/api/shops';
 import { Neighborhood } from '@/api/neighborhoods';
@@ -57,7 +58,7 @@ export default function AddShopForm({ neighborhoods, onShopAdded, onCancel }: Pr
       return;
     }
     if (!neighborhoodId) {
-      setError('Please select a neighbourhood.');
+      setError('Please select a neighborhood.');
       return;
     }
 
@@ -71,12 +72,14 @@ export default function AddShopForm({ neighborhoods, onShopAdded, onCancel }: Pr
         google_place_id: placeId || undefined,
         neighborhood_id: neighborhoodId as number,
       });
+      toast.success('Coffee shop added!');
       onShopAdded();
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ??
         'Failed to add shop';
       setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -114,14 +117,14 @@ export default function AddShopForm({ neighborhoods, onShopAdded, onCancel }: Pr
       )}
 
       <div className="space-y-1">
-        <Label htmlFor="hood">Neighbourhood</Label>
+        <Label htmlFor="hood">Neighborhood</Label>
         <Select
           id="hood"
           value={neighborhoodId}
           onChange={(e) => setNeighborhoodId(Number(e.target.value))}
           required
         >
-          <option value="">Select a neighbourhood…</option>
+          <option value="">Select a neighborhood…</option>
           {neighborhoods.map((n) => (
             <option key={n.id} value={n.id}>
               {n.name}

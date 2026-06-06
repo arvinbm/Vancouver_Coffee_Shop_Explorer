@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { login } from '@/api/auth';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ export default function LoginPage() {
     try {
       const { data } = await login({ username, password });
       authLogin(data.token, data.user);
+      toast.success(`Welcome back, ${data.user.username}!`);
       navigate('/');
     } catch (err: unknown) {
       const msg =
