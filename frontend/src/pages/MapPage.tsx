@@ -42,13 +42,18 @@ export default function MapPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'name' | 'rating' | 'reviews'>('name');
 
   // Hover preview takes priority over a permanent selection.
   const displayShop = hoveredSidebarShop ?? selectedShop;
 
-  const filteredShops = shops.filter(s =>
-    s.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredShops = shops
+    .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => {
+      if (sortBy === 'rating') return parseFloat(b.avg_rating ?? '0') - parseFloat(a.avg_rating ?? '0');
+      if (sortBy === 'reviews') return Number(b.review_count) - Number(a.review_count);
+      return a.name.localeCompare(b.name);
+    });
 
   const fetchShops = useCallback(async () => {
     const { data } = await getShops(selectedNeighborhood || undefined);
@@ -109,16 +114,26 @@ export default function MapPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
 
-          {user && (
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full"
-              onClick={() => { setShowAddForm(true); setSelectedShop(null); }}
+          <div className="flex items-center gap-2">
+            <Select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="flex-1"
             >
-              + Add a shop
-            </Button>
-          )}
+              <option value="name">A → Z</option>
+              <option value="rating">Top rated</option>
+              <option value="reviews">Most reviewed</option>
+            </Select>
+            {user && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => { setShowAddForm(true); setSelectedShop(null); }}
+              >
+                + Add
+              </Button>
+            )}
+          </div>
         </div>
 
         <ul className="flex-1 divide-y">
