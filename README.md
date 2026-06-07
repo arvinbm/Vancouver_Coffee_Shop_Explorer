@@ -24,7 +24,7 @@ A full-stack web app to discover, filter, and review coffee shops across Vancouv
 - **Animated detail panel** — slides in from the right with a smooth width transition
 - **Reviews** — star ratings (1–5) + optional comment; average shown in sidebar, map tooltip, and detail panel
 - **Delete your own review** — trash icon on reviews you wrote; ratings update instantly
-- **Auth** — JWT-based sign-up / login; protected routes for writing reviews and adding shops
+- **Auth** — JWT-based sign-up / login **or one-click Google OAuth**; protected routes for writing reviews and adding shops
 - **Add a shop** — authenticated users submit via Google Places Autocomplete
 - **Toast notifications** — warm brown success/error toasts on every action
 
@@ -39,7 +39,7 @@ A full-stack web app to discover, filter, and review coffee shops across Vancouv
 | Maps | Google Maps JS API · `@react-google-maps/api` |
 | Backend | Node.js · Express · TypeScript |
 | Database | PostgreSQL 16 |
-| Auth | JWT · bcrypt |
+| Auth | JWT · bcrypt · Google OAuth 2.0 |
 | Dev environment | Docker Compose |
 
 ---
@@ -99,7 +99,15 @@ Edit `.env`:
 ```env
 VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
 JWT_SECRET=any_long_random_string
+
+# Optional — needed only if you want Google OAuth login
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+GOOGLE_REDIRECT_URI=http://localhost:4000/api/auth/google/callback
+FRONTEND_URL=http://localhost:5173
 ```
+
+> **Google OAuth setup:** go to [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → Create OAuth 2.0 Client ID (Web application). Add `http://localhost:4000/api/auth/google/callback` as an Authorised redirect URI.
 
 ### 2 — Start
 
@@ -128,6 +136,8 @@ Visit **http://localhost:5173/signup**, register, and you can immediately write 
 |---|---|---|---|
 | `POST` | `/api/auth/signup` | — | Register a new user |
 | `POST` | `/api/auth/login` | — | Login, returns JWT |
+| `GET` | `/api/auth/google` | — | Start Google OAuth flow |
+| `GET` | `/api/auth/google/callback` | — | Google OAuth callback (handled by backend) |
 | `GET` | `/api/shops` | — | List shops (optional `?neighborhood_id=`) |
 | `GET` | `/api/shops/:id` | — | Single shop with avg rating + review count |
 | `POST` | `/api/shops` | ✓ | Add a new shop |
