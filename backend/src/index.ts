@@ -23,9 +23,10 @@ const PORT = process.env.PORT ?? 4000;
 // cors: allows the React frontend (running on port 5173) to call this API.
 // In production you'd restrict the origin to your actual domain.
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? 'https://your-production-domain.com'   // TODO: replace before deploying
-    : 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://orange-mushroom-014982d10.7.azurestaticapps.net',
+  ],
 }));
 
 // express.json(): parses incoming request bodies with Content-Type: application/json.
