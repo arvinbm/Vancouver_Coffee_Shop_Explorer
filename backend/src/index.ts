@@ -26,6 +26,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'https://orange-mushroom-014982d10.7.azurestaticapps.net',
+    'https://www.vancouvercoffee.cafe',
   ],
 }));
 
