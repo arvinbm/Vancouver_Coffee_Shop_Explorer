@@ -71,6 +71,7 @@ export default function MapPage() {
 
   function handleShopClick(shop: CoffeeShop) {
     setSelectedShop(shop);
+    setHoveredSidebarShop(shop);
     setShowAddForm(false);
     if (mapRef) {
       mapRef.panTo({ lat: parseFloat(shop.latitude), lng: parseFloat(shop.longitude) });
@@ -105,7 +106,7 @@ export default function MapPage() {
               setSelectedNeighborhood(e.target.value ? Number(e.target.value) : '')
             }
           >
-            <option value="">All neighbourhoods</option>
+            <option value="">All neighborhoods</option>
             {neighborhoods.map((n) => (
               <option key={n.id} value={n.id}>
                 {n.name}
@@ -150,13 +151,6 @@ export default function MapPage() {
                   selectedShop?.id === shop.id ? 'bg-accent' : ''
                 }`}
                 onClick={() => handleShopClick(shop)}
-                onMouseEnter={() => {
-                  setHoveredSidebarShop(shop);
-                  if (mapRef) {
-                    mapRef.panTo({ lat: parseFloat(shop.latitude), lng: parseFloat(shop.longitude) });
-                  }
-                }}
-                onMouseLeave={() => setHoveredSidebarShop(null)}
               >
                 <p className="font-medium text-sm truncate">{shop.name}</p>
                 <div className="flex items-center justify-between">
