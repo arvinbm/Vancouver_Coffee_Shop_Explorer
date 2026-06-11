@@ -98,7 +98,7 @@ export default function MapPage() {
   return (
     <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
       {/* ── Sidebar ── */}
-      <aside className="w-full md:w-72 shrink-0 flex flex-col border-r bg-background overflow-y-auto max-h-[35vh] md:max-h-full">
+      <aside className="w-full md:w-72 shrink-0 flex flex-col border-r bg-background overflow-y-auto max-h-[25vh] md:max-h-full">
         <div className="p-2 md:p-3 border-b space-y-2">
           <Select
             value={selectedNeighborhood}
@@ -247,12 +247,12 @@ export default function MapPage() {
       {/* ── Detail / Add panel ── */}
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto md:shrink-0 ${
-          displayShop || showAddForm ? 'h-[35vh] md:h-auto md:w-80' : 'h-0 md:w-0'
+          displayShop || showAddForm ? 'h-[25vh] md:h-auto md:w-80' : 'h-0 md:w-0'
         }`}
       >
         <div className="w-full md:w-80 h-full overflow-y-auto bg-background border-t md:border-t-0 md:border-l">
           {displayShop && !showAddForm && (
-            <ShopDetail shop={displayShop} onClose={() => setSelectedShop(null)} onReviewAdded={fetchShops} />
+            <ShopDetail shop={displayShop} onClose={() => {setSelectedShop(null), setHoveredSidebarShop(null)}} onReviewAdded={fetchShops} />
           )}
           {showAddForm && (
             <div className="p-4">
