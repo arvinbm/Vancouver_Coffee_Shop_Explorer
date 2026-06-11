@@ -42,3 +42,9 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
 }
+
+/* Google Places Autocomplete dropdown is appended to <body>.
+   Force it above panels/overlays so its suggestions stay clickable. */
+.pac-container {
+  z-index: 9999 !important;
+}
