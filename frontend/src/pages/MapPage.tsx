@@ -247,7 +247,7 @@ export default function MapPage() {
       {/* ── Detail / Add panel ── */}
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto md:shrink-0 ${
-          displayShop || showAddForm ? 'h-[60vh] md:h-auto md:w-80' : 'h-0 md:w-0'
+          displayShop || showAddForm ? 'h-[45vh] md:h-auto md:w-80' : 'h-0 md:w-0'
         }`}
       >
         <div className="w-full md:w-80 h-full overflow-y-auto bg-background border-t md:border-t-0 md:border-l">
