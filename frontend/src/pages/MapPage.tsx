@@ -96,10 +96,10 @@ export default function MapPage() {
   }
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
       {/* ── Sidebar ── */}
-      <aside className="w-72 shrink-0 flex flex-col border-r bg-background overflow-y-auto">
-        <div className="p-3 border-b space-y-2">
+      <aside className="w-full md:w-72 shrink-0 flex flex-col border-r bg-background overflow-y-auto max-h-[50vh] md:max-h-full">
+        <div className="p-2 md:p-3 border-b space-y-2">
           <Select
             value={selectedNeighborhood}
             onChange={(e) =>
@@ -147,7 +147,7 @@ export default function MapPage() {
             <li key={shop.id}>
               <button
                 ref={(el) => { shopRefs.current[shop.id] = el; }}
-                className={`group w-full text-left px-3 py-3 hover:bg-accent transition-colors ${
+                className={`group w-full text-left px-2 py-2 md:px-3 md:py-3 hover:bg-accent transition-colors ${
                   selectedShop?.id === shop.id ? 'bg-accent' : ''
                 }`}
                 onClick={() => handleShopClick(shop)}
@@ -169,7 +169,7 @@ export default function MapPage() {
       </aside>
 
       {/* ── Map ── */}
-      <div className="flex-1 relative">
+      <div className="h-[50vh] md:h-auto flex-1 relative">
         {isLoaded ? (
           <GoogleMap
             mapContainerStyle={MAP_CONTAINER_STYLE}
@@ -246,11 +246,11 @@ export default function MapPage() {
 
       {/* ── Detail / Add panel ── */}
       <div
-        className={`shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${
-          displayShop || showAddForm ? 'w-80' : 'w-0'
+        className={`overflow-hidden transition-all duration-300 ease-in-out fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto md:shrink-0 ${
+          displayShop || showAddForm ? 'h-[60vh] md:h-auto md:w-80' : 'h-0 md:w-0'
         }`}
       >
-        <div className="w-80 h-full overflow-y-auto bg-background border-l">
+        <div className="w-full md:w-80 h-full overflow-y-auto bg-background border-t md:border-t-0 md:border-l">
           {displayShop && !showAddForm && (
             <ShopDetail shop={displayShop} onClose={() => setSelectedShop(null)} onReviewAdded={fetchShops} />
           )}
